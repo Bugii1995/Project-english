@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" referrerpolicy="no-referrer" />
+    <title>Document</title>
+</head>
+<body>
+    
+    <div class="flex justify-center items-center h-screen bg-gray-900">
+        <div class="py-4 px-8 bg-gray-600 w-3/5 rounded-xl">
+            <h1 class="font-bold text-2xl box">Let's go!</h1>
+
+            <div class="flex flex-col gap-4 mt-5">
+                <div class="flex gap-3 items-center">
+                    <input name="answer" id="0" type="radio" value="0">
+                    <label class="text-lg zero text-white" for="0">Yes!</label>
+                </div>
+                <div class="flex gap-3 items-center">
+                    <input name="answer" id="1" type="radio" value="1">
+                    <label class="text-lg un text-white" for="1">No!</label>
+                </div>
+                <div class="flex gap-3 items-center">
+                    <input name="answer" id="2" type="radio" value="2">
+                    <label class="text-lg deux text-white" for="2">I don't know!</label>
+                </div>
+                <div class="flex gap-3 items-center">
+                    <input name="answer" id="3" type="radio" value="3">
+                    <label class="text-lg trois text-white" for="3">Maybe!</label>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-5">
+                <button class="py-3 px-8 transition duration-300 hover:text-white hover:bg-opacity-100 rounded-xl border-2 border-slate-500 bg-slate-500 text-slate-500 font-bold bg-opacity-30 skip">Skip</button>
+                <button class="py-3 px-8 transition duration-300 hover:text-white hover:bg-opacity-100 rounded-xl border-2 border-slate-500 bg-slate-500 text-slate-500 font-bold bg-opacity-30 check">Check</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const box = document.querySelector('.box');
+        const answer0 = document.querySelector('.zero');
+        const answer1 = document.querySelector('.un');
+        const answer2 = document.querySelector('.deux');
+        const answer3 = document.querySelector('.trois');
+        const input = document.querySelectorAll('input');
+        const checkBtn = document.querySelector('.check');
+        const skipBtn = document.querySelector('.skip');
+        const body = document.querySelector('body');
+        
+        var selected = 0;
+        var counter = 0;
+        var mark = 0;
+        var correct = 0;
+        var incorrect = 0;
+
+        function select(){
+            for( let i = 0; i <input.length; i++){
+                if (input[i].checked){
+                    seleceted = input[i].value
+                }
+            }
+        }
+
+        function uncheck() {
+            for (let i = 0; i <input.length; i++){
+                document.getElementById(`${i}`).checked = false;
+            }
+        }
+
+        function end() {
+            checkBtn.disabled = true;
+            skipBtn.disabled = true;
+            mark = 100 * (mark / (mark + incorrect));
+            if ( mark > 79 ) {
+                body.insertAdjacentHTML('afterbegin', `
+            <div class="module fixed h-screen w-full bg-gray-900 flex justify-center items-center flex-col gap-4">
+                <h1 class="font-bold p-4 text-9xl text-white">Thank you!</h1>
+                <div class="score text-white text-6xl p-4"> Your score is: ${mark}%</div>
+                <img src="https://ih1.redbubble.net/image.2329141612.1118/st,small,845x845-pad,1000x1000,f8f8f8.jpg" alt="fail">
+                <button class="py-3 px-8 transition duration-300 hover:text-white hover:bg-opacity-100 rounded-xl border-2 border-slate-500 bg-slate-500 text-slate-500 font-bold bg-opacity-30 try bg-gray-900">try again</button>
+            </div> 
+            `)
+            } else {
+                body.insertAdjacentHTML('afterbegin', `
+            <div class="module fixed h-screen w-full bg-gray-900 flex justify-center items-center flex-col gap-4">
+                <h1 class="font-bold p-4 text-9xl text-white">Thank you!</h1>
+                <div class="score text-white text-6xl p-4"> Your score is: ${mark}%</div>
+                <img src="https://i.kym-cdn.com/photos/images/newsfeed/002/069/850/076.jpg" alt="fail">
+                <button class="py-3 px-8 transition duration-300 hover:text-white hover:bg-opacity-100 rounded-xl border-2 border-slate-500 bg-slate-500 text-slate-500 font-bold bg-opacity-30 try bg-gray-900">try again</button>
+            </div> 
+            `)
+            }
+            const tryagain = document.querySelector('.try');
+
+            tryagain.addEventListener('click', function(){
+            reload();
+        })
+            
+        }
+
+        function reload(){
+            location.reload();
+        }
+        class Quiz {
+            constructor(question, answers, correctAnswer){
+                this.question = question;
+                this.answers = answers;
+                this.correctAnswer = correctAnswer;
+            }
+            printQuestion(){
+                uncheck();
+                box.innerHTML = "";
+                box.insertAdjacentHTML('afterbegin', this.question);
+                answer0.innerHTML = "";
+                answer0.insertAdjacentHTML('afterbegin', this.answers[0]);
+                answer1.innerHTML = "";
+                answer1.insertAdjacentHTML('afterbegin', this.answers[1]);
+                answer2.innerHTML = "";
+                answer2.insertAdjacentHTML('afterbegin', this.answers[2]);
+                answer3.innerHTML = "";
+                answer3.insertAdjacentHTML('afterbegin', this.answers[3]);
+                correct = this.correctAnswer;
+                select();
+            }
+
+            checkAnswers(){
+                select();
+                let int = parseInt(seleceted)
+                if( int === correct){
+                    mark++;
+                    counter++;
+                    if (questions[counter] !== undefined) {
+                        questions[counter].printQuestion()
+                    } else {
+                        checkBtn.disabled = true;
+                        end()
+                    }
+                } else {
+                    counter++;
+                    incorrect++;
+                    if (questions[counter] !== undefined) {
+                        questions[counter].printQuestion() 
+                    } else {
+                        checkBtn.disabled = true; 
+                        end()
+                    }
+                } 
+            }
+
+            skip(){
+                select()
+                let y = questions[counter]
+                counter++;
+                if (questions[counter] !== undefined) {
+                        questions.push(y)
+                        questions[counter].printQuestion()
+                    } else {
+                        skipBtn.disabled = true;
+                    }
+
+            }
+        }
+
+        const question = new Quiz("What does it mean in french : <br> C'est bien." , ["It is a bean." , "It is going well." , "I am tired." , 'It is not french.'] , 1);
+        const question1 = new Quiz("What does it mean in french: <br> D'accord!" , [")kay!" , "Don't!" , "Discord!" , "It is not french."] , 0);
+        const question2 = new Quiz("What does it mean in french: <br> S'il vous plait." , ["Wait" , "Please" , "Thank you" , "It is not french."] , 1);
+        const question3 = new Quiz("What does it mean in french: <br> Salut" , ["Firework" , "Stop" , "Hi" , "It is not french."] , 2);
+        const question4 = new Quiz('Which is not a french number:' , ["deux" , "un" , "quatre-vingt-dix" , "sei"] , 3);
+        const questions = [question , question1, question2, question3, question4];
+        
+
+        function init(){
+            questions.forEach(asuult => {
+                asuult.printQuestion();
+                asuult.checkAnswer()
+            })
+        }
+        onload = questions[0].printQuestion();
+
+        
+        checkBtn.addEventListener('click', function(){
+            question.checkAnswers();
+        })
+        skipBtn.addEventListener('click', function(){
+            question.skip();
+        })
+        
+
+
+    </script>
+</body>
+</html>
